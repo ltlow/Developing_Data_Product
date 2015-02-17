@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Developing Data Products</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Developing Data Products">
+  <meta name="author" content="">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Developing Data Products</h1>
+    <h2>The Predictor of US Population</h2>
+    <p><br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>About &quot;The Predictor of US Population&quot;&quot;</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The Predictor of US Population is a shiny apps designed to predict the population size in the United States based on the dataset &#39;uspop&#39; provided in R. The dataset gives the population of the United States (in millions) recorded by the  decennial census for the period 1790-1970. </p>
+
+<p>The application can be accessed by following link: </p>
+
+<p><a href="https://r14327.shinyapps.io/The_Predictor_of_US_Population/">https://r14327.shinyapps.io/The_Predictor_of_US_Population/</a></p>
+
+<h2>How to use it?</h2>
+
+<p>Choose a year in the drop-down menu to predict the US population size for the year and the result will be displayed.  To see the graph, click on the &quot;Graphic&quot; tab.</p>
+
+<p>Note that the years are set in 10-year interval from 2020 to 2090 for the prediction.</p>
+
+<p>Eg. To predict the population size for year 2020, simply select 2020 in the drop-down menu and the result will be shown, then click on the plot tab to view the graph.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>How it is built?</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The full codes in server.r and ui.r can be obtained from the github with the following link:</p>
+
+<p><a href="https://github.com/14327/Developing_Data_Product">https://github.com/14327/Developing_Data_Product</a></p>
+
+<p>The main program:</p>
+
+<pre><code class="r">  library(datasets)     #load dataset
+  USPopData &lt;- uspop
+  USPop &lt;- data.frame(USPopData)  #re-organise dataset
+  names(USPop) &lt;- c(&quot;Millions&quot;) 
+  X &lt;- 0:18                     
+  Year &lt;- seq(1790,1970, 10)
+  USPop1 &lt;- cbind(X, Year, USPop)
+  Y &lt;- 22:30                      #create new dataset for prediction reference
+  Yr &lt;- seq(2010,2090, 10)
+  PreUSPop &lt;- data.frame(Y,Yr)
+  modelData &lt;- lm(Millions~X, USPop1)  #1st model
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">  x=2020
+
+  set.seed(1234)        #set seed for reproducibility
+
+  trainset = sample(1:15, replace = FALSE)  #separate data set into training and test sets
+  USPopTrain &lt;- USPop1[trainset, ]
+  USPopTest &lt;- USPop1[-trainset, ]
+
+  model1 &lt;- lm(Millions~X, USPopTrain)  #2nd model from train set
+
+  predTest &lt;- predict(model1, USPopTest, interval=&#39;prediction&#39;, level = .95 ) #on test set
+
+  z &lt;- PreUSPop[&#39;Y&#39;][PreUSPop$Yr==x, ] #for reference
+
+  result &lt;- coef(model1)[2]*z + coef(model1)[1]    #for prediction use
+  result1 &lt;- round(result, 0)
+  result1
+</code></pre>
+
+<pre><code>##   X 
+## 179
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Summary</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The Predictor of US Population is an app designed to predict the population size for the United States. It is  based on the dataset provided in R for the period from 1790 to 1970.</p>
+
+<p>It may be more accurate in the prediction if the dataset can be refreshed with more recent data.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='About &quot;The Predictor of US Population&quot;&quot;'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='How it is built?'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title=''>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Summary'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
